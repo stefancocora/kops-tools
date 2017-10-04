@@ -1,0 +1,110 @@
+---
+groups:
+  - name: master
+    jobs:
+    - create-container
+    - major
+    - minor
+    - patch
+
+jobs:
+- name: major
+  serial_groups: [version]
+  public: true
+  plan:
+  - get: version
+    params:
+      bump: major
+      pre: rc
+  - put: version
+    params:
+      file: version/version
+- name: minor
+  serial_groups: [version]
+  public: true
+  plan:
+  - get: version
+    params:
+      bump: minor
+      pre: rc
+  - put: version
+    params:
+      file: version/version
+
+- name: patch
+  serial_groups: [version]
+  plan:
+  - get: version
+    params:
+      bump: patch
+      # pre: rc
+  - put: version
+    params:
+      file: version/version
+
+- name: create-container
+  public: true
+  serial: true
+  serial_groups: [version]
+  plan:
+    - aggregate:
+      - get: alpine_3.6
+      - get: git
+        trigger: true
+      - get: version
+    - task: build_container
+      image: alpine_3.6
+      config:
+        platform: linux
+        inputs:
+          - name: git
+          - name: version
+        run:
+          path: sh
+          args:
+            - "-exc"
+            - |
+              id
+              ls -lha
+              ls -lha version
+              ls -lha git
+              cat version/version
+    - put: kops-tools-docker-image
+      params:
+        build: git
+    - put: version
+      params:
+        bump: patch
+
+# resources
+resources:
+- name: alpine_3.6
+  type: docker-image
+  source:
+    repository: alpine
+    tag: 3.6
+
+- name: kops-tools-docker-image
+  type: docker-image
+  source:
+    repository: quay.io/stefancocora/kops-tools
+    username: stefancocora+kops_tools
+    password: ((kops_toolsQuayRobotAuth))
+    tag: latest
+
+- name: git
+  type: git
+  source:
+    uri: git@gogs-gogs.default.svc.cluster.local:stefan/kops-tools.git
+    branch: master
+    private_key: ((git_ssh_priv))
+    every: true
+
+- name: version
+  type: semver
+  source:
+    driver: git
+    uri: git@gogs-gogs.default.svc.cluster.local:stefan/kops-tools.git
+    private_key: ((git_ssh_priv))
+    branch: version
+    file: ci/version

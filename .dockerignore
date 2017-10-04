@@ -1,0 +1,6 @@
+secrets/
+.#*
+BUILD
+VERSION
+*credentials.yml
+.git/
