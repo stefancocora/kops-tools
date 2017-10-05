@@ -49,16 +49,20 @@ jobs:
   plan:
     - aggregate:
       - get: alpine_3.6
+      - get: golang_1.9
       - get: git
         trigger: true
       - get: version
-    - task: build_container
+      - get: kops-src-docker-image
+    - task: debug
       image: alpine_3.6
       config:
         platform: linux
         inputs:
           - name: git
           - name: version
+          - name: kops-src-docker-image
+            path: kops-src
         run:
           path: sh
           args:
@@ -69,6 +73,63 @@ jobs:
               ls -lha version
               ls -lha git
               cat version/version
+              ls -lha kops-src
+              ls -lha kops-src/rootfs/kops-src/
+              ls -lha kops-src/rootfs/kops-src/go/
+              ls -lha kops-src/rootfs/kops-src/kops/
+    - task: build_kops
+      image: golang_1.9
+      config:
+        platform: linux
+        inputs:
+          - name: git
+          - name: kops-src-docker-image
+            path: kops-src
+        outputs:
+          - name: kops-elf
+        params:
+          REL_GOPATH: kops-src/rootfs/kops-src/go
+          GITPATH: kops-src/rootfs/kops-src/kops
+          GODEBUG: netdns=go+1
+          CGO_ENABLED: 0
+        run:
+          path: sh
+          args:
+            - "-exc"
+            - |
+              apt-get update && apt-get install -y make bash git
+              OLDPATH=$(pwd)
+              ls -lha kops-src/rootfs/kops-src/go/
+              cd $GITPATH
+              export GOPATH=$OLDPATH/$REL_GOPATH
+              export CGO_ENABLED=$CGO_ENABLED
+              export GODEBUG=$GODEBUG
+              make kops
+              ls -lah $OLDPATH/$REL_GOPATH/src/k8s.io/kops/.build/local/
+              strip $OLDPATH/$REL_GOPATH/src/k8s.io/kops/.build/local/kops
+              cp  $OLDPATH/$REL_GOPATH/src/k8s.io/kops/.build/local/kops $OLDPATH/kops-elf/
+    - task: build_container
+      image: alpine_3.6
+      config:
+        platform: linux
+        inputs:
+          - name: git
+          - name: version
+          - name: kops-elf
+        run:
+          path: sh
+          args:
+            - "-exc"
+            - |
+              id
+              ls -lha
+              ls -lha kops-elf/
+              ls -lha git/
+              OLDPATH=$(pwd)
+              mkdir git/elf
+              ls -lha kops-elf/kops
+              ls -lha git/kops
+              cp kops-elf/kops git/elf
     - put: kops-tools-docker-image
       params:
         build: git
@@ -83,6 +144,11 @@ resources:
   source:
     repository: alpine
     tag: 3.6
+- name: golang_1.9
+  type: docker-image
+  source:
+    repository: golang
+    tag: 1.9
 
 - name: kops-tools-docker-image
   type: docker-image
@@ -90,6 +156,14 @@ resources:
     repository: quay.io/stefancocora/kops-tools
     username: stefancocora+kops_tools
     password: ((kops_toolsQuayRobotAuth))
+    tag: latest
+
+- name: kops-src-docker-image
+  type: docker-image
+  source:
+    repository: quay.io/stefancocora/kops-src
+    username: stefancocora+kopssrc
+    password: ((kopssrcQuayRobotAuth))
     tag: latest
 
 - name: git
