@@ -128,7 +128,8 @@ jobs:
               OLDPATH=$(pwd)
               mkdir git/elf
               ls -lha kops-elf/kops
-              ls -lha git/kops
+              ls -lha git/
+              ls -lha git/elf
               cp kops-elf/kops git/elf
     - put: kops-tools-docker-image
       params:
