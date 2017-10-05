@@ -11,7 +11,7 @@ ENV CWD="/${TOOLSET_NAME}"
 ENV UNPRIVILEDGED_USER="kops"
 
 
-RUN apk add --update --no-cache ca-certificates py2-pip util-linux openssl tree
+RUN apk add --update --no-cache ca-certificates coreutils py2-pip util-linux openssl tree
 
 # install terraform
 # ADD commands are not cached by docker, using wget
