@@ -17,7 +17,7 @@ RUN apk add --update --no-cache ca-certificates coreutils py2-pip util-linux ope
 # ADD commands are not cached by docker, using wget
 RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -O terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_SHA256SUMS -O  terraform_${TERRAFORM_VERSION}_SHA256SUMS
-RUN echo "${TERRAFORM_SHA256SUM}  terraform_${TERRAFORM_VERSION}_linux_amd64.zip" > terraform_${TERRAFORM_VERSION}_SHA256SUMS && //minikubegit/stefan/kops-src.gitsha256sum -cs terraform_${TERRAFORM_VERSION}_SHA256SUMS
+RUN echo "${TERRAFORM_SHA256SUM}  terraform_${TERRAFORM_VERSION}_linux_amd64.zip" > terraform_${TERRAFORM_VERSION}_SHA256SUMS && sha256sum -cs terraform_${TERRAFORM_VERSION}_SHA256SUMS
 RUN unzip -o terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /bin
 RUN rm -f terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 RUN rm -f terraform_${TERRAFORM_VERSION}_SHA256SUMS
