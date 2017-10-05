@@ -22,6 +22,12 @@ RUN unzip -o terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /bin
 RUN rm -f terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 RUN rm -f terraform_${TERRAFORM_VERSION}_SHA256SUMS
 
+# install awscli
+RUN \
+	pip install awscli && \
+	apk --purge -v del py-pip && \
+	rm /var/cache/apk/*
+
 WORKDIR ${CWD}
 
 RUN adduser -h /home/${UNPRIVILEDGED_USER} -D -G users -s /bin/sh ${UNPRIVILEDGED_USER}
