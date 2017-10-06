@@ -153,6 +153,19 @@ jobs:
     - put: kops-tools-docker-image
       params:
         build: kops-dockerdir
+    - task: wait_for_gitrepo
+      image: alpine_3.6
+      config:
+        platform: linux
+        inputs:
+          - name: git
+          - name: version
+        run:
+          path: sh
+          args:
+            - "-exc"
+            - |
+              git/scripts/waitforremote.sh http://gogs-gogs.default.svc.cluster.local 180
     - put: version
       params:
         bump: patch
