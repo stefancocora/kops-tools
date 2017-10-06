@@ -1,4 +1,4 @@
-#/usr/bin/env sh
+#/usr/bin/env bash
 
 URL=$1
 WAIT=${2:-10}
