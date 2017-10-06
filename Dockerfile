@@ -3,7 +3,7 @@ MAINTAINER "Stefan Cocora <stefan.cocora@googlemail.com>"
 
 # inspired by https://github.com/hashicorp/docker-hub-images/blob/master/terraform/Dockerfile-light
 
-ENV AWSCLI_VERSION="1.11.162"
+ENV AWSCLI_VERSION="1.11.166"
 ENV TERRAFORM_VERSION=0.10.6
 ENV TERRAFORM_SHA256SUM=fbb4c37d91ee34aff5464df509367ab71a90272b7fab0fbd1893b367341d6e23
 ENV TOOLSET_NAME="kops-tools"
@@ -23,9 +23,8 @@ RUN rm -f terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 RUN rm -f terraform_${TERRAFORM_VERSION}_SHA256SUMS
 
 # install awscli
-RUN \
-	pip install awscli && \
-	apk --purge -v del py-pip && \
+RUN pip --disable-pip-version-check install awscli==$AWSCLI_VERSION && \
+	apk --purge -v del py2-pip openssl ca-certificates && \
 	rm /var/cache/apk/*
 
 WORKDIR ${CWD}
