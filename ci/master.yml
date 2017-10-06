@@ -108,7 +108,7 @@ jobs:
               ls -lah $OLDPATH/$REL_GOPATH/src/k8s.io/kops/.build/local/
               strip $OLDPATH/$REL_GOPATH/src/k8s.io/kops/.build/local/kops
               cp  $OLDPATH/$REL_GOPATH/src/k8s.io/kops/.build/local/kops $OLDPATH/kops-elf/
-    - task: build_container
+    - task: prepare_container
       image: alpine_3.6
       config:
         platform: linux
@@ -126,14 +126,32 @@ jobs:
               ls -lha kops-elf/
               ls -lha git/
               OLDPATH=$(pwd)
-              mkdir git/elf
+              cp -rv git/.* kops-dockerdir/
+              mkdir kops-dockerdir/elf
+              cp -rv kops-elf/kops kops-dockerdir/elf
               ls -lha kops-elf/kops
-              ls -lha git/
-              ls -lha git/elf
-              cp kops-elf/kops git/elf
+              ls -lha kops-dockerdir/
+              ls -lha kops-dockerdir/elf
+        outputs:
+          - name: kops-dockerdir
+    - task: build_container
+      image: alpine_3.6
+      config:
+        platform: linux
+        inputs:
+          - name: git
+          - name: version
+          - name: kops-dockerdir
+        run:
+          path: sh
+          args:
+            - "-exc"
+            - |
+              ls -lha kops-dockerdir/
+              ls -lha kops-dockerdir/elf/
     - put: kops-tools-docker-image
       params:
-        build: git
+        build: kops-dockerdir
     - put: version
       params:
         bump: patch
