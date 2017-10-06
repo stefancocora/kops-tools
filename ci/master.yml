@@ -121,12 +121,13 @@ jobs:
           args:
             - "-exc"
             - |
+              apk --update --no-cache add rsync
               id
               ls -lha
               ls -lha kops-elf/
               ls -lha git/
               OLDPATH=$(pwd)
-              cp -rv git/.* kops-dockerdir/
+              rsync -azvi --del --exclude=.git/ git/ kops-dockerdir
               mkdir kops-dockerdir/elf
               cp -rv kops-elf/kops kops-dockerdir/elf
               ls -lha kops-elf/kops
