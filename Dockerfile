@@ -33,7 +33,7 @@ WORKDIR ${CWD}
 RUN adduser -h /home/${UNPRIVILEDGED_USER} -D -G users -s /bin/sh ${UNPRIVILEDGED_USER}
 RUN chown ${UNPRIVILEDGED_USER}:users -R ${CWD}
 
-ADD elf/kops.* /usr/bin/kops
+ADD elf/kops /usr/bin/kops
 
 USER ${UNPRIVILEDGED_USER}
 
