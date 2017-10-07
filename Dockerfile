@@ -24,7 +24,7 @@ RUN rm -f terraform_${TERRAFORM_VERSION}_SHA256SUMS
 
 # install awscli
 RUN pip --disable-pip-version-check install awscli==$AWSCLI_VERSION && \
-	apk --purge -v del py2-pip openssl ca-certificates && \
+	apk --purge -v del openssl ca-certificates && \
 	rm /var/cache/apk/*
 
 WORKDIR ${CWD}
