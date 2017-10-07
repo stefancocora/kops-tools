@@ -1,5 +1,8 @@
 #/usr/bin/env bash
 
+# this script doesn't work in concourse runc contaners +busybox/alpine+ due to line 56 - export -f BARFOOBAX
+# to make it work in concourse runc containers +busybox/alpine+ you need to wrap this scripts in timeout externally in the pipeline definition
+
 URL=$1
 WAIT=${2:-10}
 SCHEME=$(echo "$URL" | sed "s/^.*\(https\?\).*$/\1/")
@@ -53,10 +56,14 @@ fi
 echo "detected os: $OS"
 echo "waiting $WAIT seconds for remote to be ready - $URL"
 # https://stackoverflow.com/questions/9954794/execute-function-with-timeout
-export -f waitForRemote
-if [ "$OS" = "alpine" ]
-then
-  timeout -t "$WAIT"  bash -c waitForRemote
-else
-  timeout --preserve-status "$WAIT"  bash -c waitForRemote
-fi
+# https://stackoverflow.com/questions/5161193/bash-script-that-kills-a-child-process-after-a-given-timeout
+#### https://stackoverflow.com/a/5161274
+
+waitForRemote
+# export -f waitForRemote
+# if [ "$OS" = "alpine" ]
+# then
+#   timeout -t "$WAIT"  bash -c waitForRemote
+# else
+#   timeout --preserve-status "$WAIT"  bash -c waitForRemote
+# fi
