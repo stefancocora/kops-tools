@@ -28,7 +28,7 @@ waitForRemote(){
     EXTRA=""
   fi
 
-  until $(curl -m2 --output /dev/null --silent --head --fail "$EXTRA" "$URL"); do
+  until $(curl -m2 --output /dev/null --silent --fail "$EXTRA" "$URL" >/dev/null); do
     printf '.'
     sleep 2
   done
