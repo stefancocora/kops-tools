@@ -139,24 +139,43 @@ jobs:
               ls -lha kops-dockerdir/elf
         outputs:
           - name: kops-dockerdir
-    - task: build_container
-      image: alpine_3.6
-      config:
-        platform: linux
-        inputs:
-          - name: git
-          - name: version
-          - name: kops-dockerdir
-        run:
-          path: sh
-          args:
-            - "-exc"
-            - |
-              ls -lha kops-dockerdir/
-              ls -lha kops-dockerdir/elf/
-    - put: kops-tools-docker-image
-      params:
-        build: kops-dockerdir
+    - aggregate:
+      - task: build_container_quay
+        image: alpine_3.6
+        config:
+          platform: linux
+          inputs:
+            - name: git
+            - name: version
+            - name: kops-dockerdir
+          run:
+            path: sh
+            args:
+              - "-exc"
+              - |
+                ls -lha kops-dockerdir/
+                ls -lha kops-dockerdir/elf/
+      - put: kops-tools-docker-image-quay
+        params:
+          build: kops-dockerdir
+      - task: build_container_dockerhub
+        image: alpine_3.6
+        config:
+          platform: linux
+          inputs:
+            - name: git
+            - name: version
+            - name: kops-dockerdir
+          run:
+            path: sh
+            args:
+              - "-exc"
+              - |
+                ls -lha kops-dockerdir/
+                ls -lha kops-dockerdir/elf/
+      - put: kops-tools-docker-image-dockerhub
+        params:
+          build: kops-dockerdir
     - task: wait_for_gitrepo
       image: alpine_3.6
       config:
@@ -188,12 +207,20 @@ resources:
     repository: golang
     tag: 1.9
 
-- name: kops-tools-docker-image
+- name: kops-tools-docker-image-quay
   type: docker-image
   source:
     repository: quay.io/stefancocora/kops-tools
     username: stefancocora+kops_tools
     password: ((kops_toolsQuayRobotAuth))
+    tag: latest
+
+- name: kops-tools-docker-image-dockerhub
+  type: docker-image
+  source:
+    repository: stefancocora/kops-tools
+    username: stefancocora
+    password: ((kops_toolsDockerhub))
     tag: latest
 
 - name: kops-src-docker-image
