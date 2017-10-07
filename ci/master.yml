@@ -97,21 +97,21 @@ jobs:
           args:
             - "-exc"
             - |
-              echo "noop"
-              OLDPATH=$(pwd)
-              # echo ""
-              # apt-get update && apt-get install -y make bash git
+              # echo "noop"
               # OLDPATH=$(pwd)
-              # ls -lha kops-src/rootfs/kops-src/go/
-              # cd $GITPATH
-              # export GOPATH=$OLDPATH/$REL_GOPATH
-              # export CGO_ENABLED=$CGO_ENABLED
-              # export GODEBUG=$GODEBUG
-              # make kops
-              # ls -lah $OLDPATH/$REL_GOPATH/src/k8s.io/kops/.build/local/
-              # strip $OLDPATH/$REL_GOPATH/src/k8s.io/kops/.build/local/kops
-              # cp  $OLDPATH/$REL_GOPATH/src/k8s.io/kops/.build/local/kops $OLDPATH/kops-elf/
-              touch $OLDPATH/kops-elf/kops
+              # echo ""
+              apt-get update && apt-get install -y make bash git
+              OLDPATH=$(pwd)
+              ls -lha kops-src/rootfs/kops-src/go/
+              cd $GITPATH
+              export GOPATH=$OLDPATH/$REL_GOPATH
+              export CGO_ENABLED=$CGO_ENABLED
+              export GODEBUG=$GODEBUG
+              make kops
+              ls -lah $OLDPATH/$REL_GOPATH/src/k8s.io/kops/.build/local/
+              strip $OLDPATH/$REL_GOPATH/src/k8s.io/kops/.build/local/kops
+              cp  $OLDPATH/$REL_GOPATH/src/k8s.io/kops/.build/local/kops $OLDPATH/kops-elf/
+              # touch $OLDPATH/kops-elf/kops
     - task: prepare_container
       image: alpine_3.6
       config:
@@ -169,8 +169,8 @@ jobs:
           args:
             - "-exc"
             - |
-              # apk --update --no-cache add bash
-              timeout -t 180 git/scripts/waitforremote.sh http://gogs-gogs.default.svc.cluster.local
+              apk --update --no-cache add bash curl
+              timeout -t 300 bash -c 'git/scripts/waitforremote.sh http://gogs-gogs.default.svc.cluster.local'
     - put: version
       params:
         bump: patch
