@@ -36,4 +36,4 @@ ADD elf/kops /usr/bin/kops
 
 USER ${UNPRIVILEDGED_USER}
 
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/bin/sh"]
