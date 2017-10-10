@@ -129,6 +129,7 @@ jobs:
               id
               ls -lha
               ls -lha kops-elf/
+              kops-elf/kops version
               ls -lha git/
               OLDPATH=$(pwd)
               rsync -azvi --del --exclude=.git/ git/ kops-dockerdir
