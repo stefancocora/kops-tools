@@ -1,2 +1,2 @@
-# src
-- src is in the repo `containerfiles/dockerfiles/kops-tools`
+# kops-tools repo
+- tools for working with kops
