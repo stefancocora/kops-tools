@@ -17,7 +17,7 @@ MAKEFLAGS += --no-builtin-rules
 
 # constants
 ELF_NAME = kops-tools
-ELF_VERSION ?= 0.0.1
+ELF_VERSION ?= 0.0.2
 BUILD_TIMEOUT = 1200 # seconds
 
 CONTAINER_IMAGENAME = stefancocora/$(ELF_NAME)
@@ -57,8 +57,8 @@ ifeq ($(DEBUG),true)
 	$(info imagename: $(CONTAINER_IMAGENAME))
 	$(info debug: $(DEBUG))
 endif
-	$(info com: 	timeout --preserve-status 120s docker build -t "$(CONTAINER_IMAGENAME):$(strip $(CONTAINER_VERSION))" .)
-	timeout --preserve-status $(BUILD_TIMEOUT) docker build -t $(CONTAINER_IMAGENAME):$(strip $(CONTAINER_VERSION)) .
+	$(info com: 	timeout --preserve-status 120s sudo docker build -t "$(CONTAINER_IMAGENAME):$(strip $(CONTAINER_VERSION))" .)
+	timeout --preserve-status $(BUILD_TIMEOUT) sudo docker build -t $(CONTAINER_IMAGENAME):$(strip $(CONTAINER_VERSION)) .
 
 .PHONY: container_image
 container_image:
