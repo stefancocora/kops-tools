@@ -43,7 +43,7 @@ RUN chown ${UNPRIVILEDGED_USER}:users -R ${CWD}
 
 # kops
 ADD elf/kops /usr/local/bin/kops
-RUN chmod +x /usr/local/bin/kubectl
+RUN chmod +x /usr/local/bin/kops
 
 # RUN apk add --no-cache --update ca-certificates vim curl jq && \
 #     KOPS_URL=$(curl -s https://api.github.com/repos/kubernetes/kops/releases/${KOPS_RELEASE_ID} | jq -r ".assets[] | select(.name == \"kops-linux-amd64\") | .browser_download_url") && \
