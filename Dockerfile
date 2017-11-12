@@ -32,9 +32,7 @@ RUN rm -f terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 RUN rm -f terraform_${TERRAFORM_VERSION}_SHA256SUMS
 
 # install awscli
-RUN pip --disable-pip-version-check install awscli==$AWSCLI_VERSION && \
-	apk --purge -v del openssl ca-certificates && \
-	rm /var/cache/apk/*
+RUN pip --disable-pip-version-check install awscli==$AWSCLI_VERSION
 
 WORKDIR ${CWD}
 
@@ -62,8 +60,10 @@ RUN wget http://storage.googleapis.com/kubernetes-helm/helm-${HELM_VERSION}-linu
 
 # install yaml
 RUN wget https://github.com/mikefarah/yaml/releases/download/${YAML_VERSION}/yaml_linux_amd64 -O /usr/local/bin/yaml && \
-    chmod +x /usr/local/bin/yaml && \
-    sha256sum /usr/local/bin/yaml | grep $YAML_SHASUM
+  chmod +x /usr/local/bin/yaml && \
+  sha256sum /usr/local/bin/yaml | grep $YAML_SHASUM && \
+	apk --purge -v del openssl ca-certificates && \
+	rm /var/cache/apk/*
 
 USER ${UNPRIVILEDGED_USER}
 
