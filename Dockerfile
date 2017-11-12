@@ -42,14 +42,16 @@ RUN adduser -h /home/${UNPRIVILEDGED_USER} -D -G users -s /bin/sh ${UNPRIVILEDGE
 RUN chown ${UNPRIVILEDGED_USER}:users -R ${CWD}
 
 # kops
-#ADD elf/kops /usr/local/bin/kops
-RUN apk add --no-cache --update ca-certificates vim curl jq && \
-    KOPS_URL=$(curl -s https://api.github.com/repos/kubernetes/kops/releases/${KOPS_RELEASE_ID} | jq -r ".assets[] | select(.name == \"kops-linux-amd64\") | .browser_download_url") && \
-    curl -SsL --retry 5 "${KOPS_URL}" > /usr/local/bin/kops && \
-    chmod +x /usr/local/bin/kops && \
-    KUBECTL_VERSION=$(curl -SsL --retry 5 "https://storage.googleapis.com/${KUBECTL_SOURCE}/${KUBECTL_TRACK}") && \
-    curl -SsL --retry 5 "https://storage.googleapis.com/${KUBECTL_SOURCE}/${KUBECTL_VERSION}/bin/${KUBECTL_ARCH}/kubectl" > /usr/local/bin/kubectl && \
-    chmod +x /usr/local/bin/kubectl
+ADD elf/kops /usr/local/bin/kops
+RUN chmod +x /usr/local/bin/kubectl
+
+# RUN apk add --no-cache --update ca-certificates vim curl jq && \
+#     KOPS_URL=$(curl -s https://api.github.com/repos/kubernetes/kops/releases/${KOPS_RELEASE_ID} | jq -r ".assets[] | select(.name == \"kops-linux-amd64\") | .browser_download_url") && \
+#     curl -SsL --retry 5 "${KOPS_URL}" > /usr/local/bin/kops && \
+#     chmod +x /usr/local/bin/kops && \
+#     KUBECTL_VERSION=$(curl -SsL --retry 5 "https://storage.googleapis.com/${KUBECTL_SOURCE}/${KUBECTL_TRACK}") && \
+#     curl -SsL --retry 5 "https://storage.googleapis.com/${KUBECTL_SOURCE}/${KUBECTL_VERSION}/bin/${KUBECTL_ARCH}/kubectl" > /usr/local/bin/kubectl && \
+#     chmod +x /usr/local/bin/kubectl
 
 
 ADD https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl /usr/local/bin/kubectl
