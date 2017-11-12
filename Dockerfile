@@ -19,7 +19,7 @@ ENV YAML_SHASUM=28308a7231905030a62f20c92d41513e570d24f1984c1864198cbc4e039d3bec
 ENV KOPS_RELEASE_ID=8410205
 
 
-RUN apk add --update --no-cache ca-certificates coreutils make py2-pip util-linux openssh openssl tree
+RUN apk add --update --no-cache bash ca-certificates coreutils make py2-pip util-linux openssh openssl tree
 
 # install terraform
 # install terraform
