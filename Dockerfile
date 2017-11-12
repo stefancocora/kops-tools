@@ -65,6 +65,4 @@ RUN wget https://github.com/mikefarah/yaml/releases/download/${YAML_VERSION}/yam
 	apk --purge -v del openssl ca-certificates && \
 	rm /var/cache/apk/*
 
-USER ${UNPRIVILEDGED_USER}
-
 ENTRYPOINT ["/bin/sh"]
