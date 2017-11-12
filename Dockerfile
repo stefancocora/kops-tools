@@ -61,7 +61,7 @@ RUN wget http://storage.googleapis.com/kubernetes-helm/helm-${HELM_VERSION}-linu
     && rm -f /helm-${HELM_VERSION}-linux-amd64.tar.gz
 
 # install yaml
-RUN curl -L https://github.com/mikefarah/yaml/releases/download/${YAML_VERSION}/yaml_linux_amd64 > /usr/local/bin/yaml && \
+RUN wget https://github.com/mikefarah/yaml/releases/download/${YAML_VERSION}/yaml_linux_amd64 -O /usr/local/bin/yaml && \
     chmod +x /usr/local/bin/yaml && \
     sha256sum /usr/local/bin/yaml | grep $YAML_SHASUM
 
